@@ -71,6 +71,7 @@ const App = () => {
           setName(item.name);
           return false;
         }}
+        maxCount={1}
       >
         <p className="ant-upload-drag-icon">
           <InboxOutlined />
