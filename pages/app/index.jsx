@@ -65,6 +65,8 @@ const App = () => {
         </Spin>
       )}
 
+      <h2 align="center">ffmpeg-online</h2>
+
       <Dragger
         beforeUpload={(item) => {
           setFile(item);
@@ -83,15 +85,18 @@ const App = () => {
         ffmpeg
         <Input
           value={first}
+          placeholder="请输入待执行指令"
           onChange={(event) => setFirst(event.target.value)}
         />
         {name}
         <Input
           value={second}
+          placeholder="请输入待执行指令"
           onChange={(event) => setSecond(event.target.value)}
         />
         <Input
           value={output}
+          placeholder="请输入下载文件名"
           onChange={(event) => setOutput(event.target.value)}
         />
       </div>
