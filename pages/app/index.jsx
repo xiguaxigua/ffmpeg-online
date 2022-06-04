@@ -1,4 +1,4 @@
-import { Spin, Upload, Input, Button } from "antd";
+import { Spin, Upload, Input, Button, message } from "antd";
 import { useEffect, useRef, useState } from "react";
 import { createFFmpeg, fetchFile } from "@ffmpeg/ffmpeg";
 import { InboxOutlined } from "@ant-design/icons";
@@ -24,23 +24,28 @@ const App = () => {
     }
     const { name } = file;
     ffmpeg.current.FS("writeFile", name, await fetchFile(file));
+    try {
+      setSpinning(true);
+      await ffmpeg.current.run(
+        ...first.split(" "),
+        name,
+        ...second.split(" "),
+        output
+      );
+      setSpinning(false);
 
-    setSpinning(true);
-    await ffmpeg.current.run(
-      ...first.split(" "),
-      name,
-      ...second.split(" "),
-      output
-    );
-    setSpinning(false);
+      const data = ffmpeg.current.FS("readFile", output);
+      const type = await fileTypeFromBuffer(data.buffer);
 
-    const data = ffmpeg.current.FS("readFile", output);
-    const type = await fileTypeFromBuffer(data.buffer);
-
-    const objectURL = URL.createObjectURL(
-      new Blob([data.buffer], { type: type.mime })
-    );
-    setHref(objectURL);
+      const objectURL = URL.createObjectURL(
+        new Blob([data.buffer], { type: type.mime })
+      );
+      setHref(objectURL);
+      message.success("运行成功，点击下载按钮下载输出文件", 10);
+    } catch (err) {
+      console.error(err);
+      message.error("运行失败，请检查命令是否正确或打开控制台查看错误详情", 10);
+    }
   };
 
   useEffect(() => {
