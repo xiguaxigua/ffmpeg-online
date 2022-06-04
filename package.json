@@ -7,6 +7,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "antd": "^4.20.7",
     "next": "12.1.4",
     "react": "18.0.0",
     "react-dom": "18.0.0"
