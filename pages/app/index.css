@@ -1,0 +1,42 @@
+.component-spin {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  z-index: 100;
+  background-color: hsla(0, 0%, 100%, 0.9);
+}
+
+.ant-spin-nested-loading > div > .ant-spin {
+  max-height: none !important;
+}
+
+.ant-spin-nested-loading {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  z-index: 100;
+}
+
+.page-app {
+  width: 500px;
+  padding-top: 20px;
+  margin: 0 auto;
+}
+
+.ant-upload.ant-upload {
+  width: 500px;
+  padding: 10px;
+}
+
+.exec {
+  width: 500px;
+  margin: 20px 0;
+}
+
+.ant-input {
+  margin: 10px 0;
+}
