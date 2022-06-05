@@ -34,9 +34,12 @@
 
 .exec {
   width: 500px;
-  margin: 20px 0;
 }
 
 .ant-input {
   margin: 10px 0;
+}
+
+h4 {
+  margin-top: 20px;
 }

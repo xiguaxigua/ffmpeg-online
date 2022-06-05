@@ -26,7 +26,6 @@ const App = () => {
     try {
       setTip("Loading file into browser");
       setSpinning(true);
-      const { name } = file;
       for (const fileItem of fileList) {
         ffmpeg.current.FS(
           "writeFile",
@@ -87,6 +86,7 @@ const App = () => {
 
       <h2 align="center">ffmpeg-online</h2>
 
+      <h4>1. Upload file</h4>
       <Dragger
         multiple
         beforeUpload={(file, fileList) => {
@@ -101,7 +101,7 @@ const App = () => {
         </p>
         <p className="ant-upload-text">Click or drag file upload</p>
       </Dragger>
-
+      <h4>2. Set ffmpeg options</h4>
       <div className="exec">
         ffmpeg
         <Input
@@ -109,7 +109,11 @@ const App = () => {
           placeholder="please enter input options"
           onChange={(event) => setInputOptions(event.target.value)}
         />
-        {name}
+        <Input
+          value={name}
+          placeholder="please enter input filename"
+          onChange={(event) => setName(event.target.value)}
+        />
         <Input
           value={outputOptions}
           placeholder="please enter output options"
@@ -121,6 +125,7 @@ const App = () => {
           onChange={(event) => setOutput(event.target.value)}
         />
       </div>
+      <h4>3. Run and get the output file</h4>
       <Button type="primary" disabled={!Boolean(file)} onClick={handleExec}>
         run
       </Button>
