@@ -10,10 +10,11 @@ const { Dragger } = Upload;
 const App = () => {
   const [spinning, setSpinning] = useState(false);
   const [tip, setTip] = useState(false);
-  const [first, setFirst] = useState("-i");
-  const [second, setSecond] = useState("");
+  const [inputOptions, setInputOptions] = useState("-i");
+  const [outputOptions, setOutputOptions] = useState("");
   const [href, setHref] = useState("");
   const [file, setFile] = useState();
+  const [fileList, setFileList] = useState([]);
   const [name, setName] = useState("input.mp4");
   const [output, setOutput] = useState("output.mp4");
   const ffmpeg = useRef();
@@ -22,14 +23,22 @@ const App = () => {
     if (!file) {
       return;
     }
-    const { name } = file;
-    ffmpeg.current.FS("writeFile", name, await fetchFile(file));
     try {
+      setTip("Loading file into browser");
       setSpinning(true);
+      const { name } = file;
+      for (const fileItem of fileList) {
+        ffmpeg.current.FS(
+          "writeFile",
+          fileItem.name,
+          await fetchFile(fileItem)
+        );
+      }
+      setTip("start executing the command");
       await ffmpeg.current.run(
-        ...first.split(" "),
+        ...inputOptions.split(" "),
         name,
-        ...second.split(" "),
+        ...outputOptions.split(" "),
         output
       );
       setSpinning(false);
@@ -41,10 +50,16 @@ const App = () => {
         new Blob([data.buffer], { type: type.mime })
       );
       setHref(objectURL);
-      message.success("运行成功，点击下载按钮下载输出文件", 10);
+      message.success(
+        "Run successfully, click the download button to download the output file",
+        10
+      );
     } catch (err) {
       console.error(err);
-      message.error("运行失败，请检查命令是否正确或打开控制台查看错误详情", 10);
+      message.error(
+        "Failed to run, please check if the command is correct or open the console to view the error details",
+        10
+      );
     }
   };
 
@@ -55,7 +70,7 @@ const App = () => {
         console.log(ratio);
         setTip(numerify(ratio, "0.0%"));
       });
-      setTip("静态资源加载中...");
+      setTip("ffmpeg static resource loading...");
       setSpinning(true);
       await ffmpeg.current.load();
       setSpinning(false);
@@ -73,46 +88,47 @@ const App = () => {
       <h2 align="center">ffmpeg-online</h2>
 
       <Dragger
-        beforeUpload={(item) => {
-          setFile(item);
-          setName(item.name);
+        multiple
+        beforeUpload={(file, fileList) => {
+          setFile(file);
+          setFileList((v) => [...v, ...fileList]);
+          setName(file.name);
           return false;
         }}
-        maxCount={1}
       >
         <p className="ant-upload-drag-icon">
           <InboxOutlined />
         </p>
-        <p className="ant-upload-text">点击或拖拽文件上传</p>
+        <p className="ant-upload-text">Click or drag file upload</p>
       </Dragger>
 
       <div className="exec">
         ffmpeg
         <Input
-          value={first}
-          placeholder="请输入待执行指令"
-          onChange={(event) => setFirst(event.target.value)}
+          value={inputOptions}
+          placeholder="please enter input options"
+          onChange={(event) => setInputOptions(event.target.value)}
         />
         {name}
         <Input
-          value={second}
-          placeholder="请输入待执行指令"
-          onChange={(event) => setSecond(event.target.value)}
+          value={outputOptions}
+          placeholder="please enter output options"
+          onChange={(event) => setOutputOptions(event.target.value)}
         />
         <Input
           value={output}
-          placeholder="请输入下载文件名"
+          placeholder="Please enter the download file name"
           onChange={(event) => setOutput(event.target.value)}
         />
       </div>
       <Button type="primary" disabled={!Boolean(file)} onClick={handleExec}>
-        执行
+        run
       </Button>
       <br />
       <br />
       {href && (
         <a href={href} download={output}>
-          下载文件
+          download file
         </a>
       )}
     </div>
