@@ -38,4 +38,4 @@ ffmpeg -i test.mp4 -strict -2 -vf crop=1126:742:0:420 output.mp4
 
 You can upload the `test.mp4` file and run the command following the example below
 
-![](./demo/cut-video.jpg)
+![](./demo/crop-video.jpg)
