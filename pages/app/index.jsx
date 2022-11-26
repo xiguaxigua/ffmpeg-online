@@ -64,7 +64,7 @@ const App = () => {
 
   useEffect(() => {
     (async () => {
-      ffmpeg.current = createFFmpeg({ log: true, corePath: "/ffmpeg-core.js" });
+      ffmpeg.current = createFFmpeg({ log: true, corePath: "/static/ffmpeg-core.js" });
       ffmpeg.current.setProgress(({ ratio }) => {
         console.log(ratio);
         setTip(numerify(ratio, "0.0%"));
