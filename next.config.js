@@ -42,7 +42,7 @@ const nextConfig = {
         ],
       },
       {
-        source: "/static/*",
+        source: "/static/:all*",
         headers: [
           {
             key: 'Cache-Control',
