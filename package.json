@@ -13,6 +13,7 @@
     "file-type": "^17.1.2",
     "next": "12.1.4",
     "numerify": "^1.2.9",
+    "query-string": "^8.1.0",
     "react": "18.0.0",
     "react-dom": "18.0.0"
   },
