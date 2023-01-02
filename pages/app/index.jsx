@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { createFFmpeg, fetchFile } from "@ffmpeg/ffmpeg";
 import { InboxOutlined } from "@ant-design/icons";
 import { fileTypeFromBuffer } from "file-type";
+import { Analytics } from '@vercel/analytics/react';
 import numerify from "numerify/lib/index.cjs";
 import qs from "query-string";
 
@@ -247,6 +248,7 @@ const App = () => {
           ></path>
         </svg>
       </a>
+      <Analytics />
     </div>
   );
 };

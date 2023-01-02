@@ -9,6 +9,7 @@
   "dependencies": {
     "@ffmpeg/core": "^0.10.0",
     "@ffmpeg/ffmpeg": "^0.10.1",
+    "@vercel/analytics": "^0.1.6",
     "antd": "^4.20.7",
     "file-type": "^17.1.2",
     "next": "12.1.4",
