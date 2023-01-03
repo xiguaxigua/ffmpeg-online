@@ -8,6 +8,13 @@
   background-color: hsla(0, 0%, 100%, 0.9);
 }
 
+.command-text {
+  border: 1px solid #eee;
+  padding: 3px 6px;
+  color: #ccc;
+  border-radius: 3px;
+}
+
 .ant-spin-nested-loading > div > .ant-spin {
   max-height: none !important;
 }
