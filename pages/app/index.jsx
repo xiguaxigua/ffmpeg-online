@@ -139,7 +139,8 @@ const App = () => {
 
       <h2 align="center">ffmpeg-online</h2>
 
-      <h4>1. Upload file</h4>
+      <h4>1. Select file</h4>
+      <p style={{ color: 'gray' }}>Your files will not be uploaded to the server, only processed in the browser</p>
       <Dragger
         multiple
         beforeUpload={(file, fileList) => {
@@ -152,7 +153,7 @@ const App = () => {
         <p className="ant-upload-drag-icon">
           <InboxOutlined />
         </p>
-        <p className="ant-upload-text">Click or drag file upload</p>
+        <p className="ant-upload-text">Click or drag file</p>
       </Dragger>
       <h4>2. Set ffmpeg options</h4>
       <div className="exec">
@@ -177,6 +178,9 @@ const App = () => {
           placeholder="Please enter the download file name"
           onChange={(event) => setOutput(event.target.value)}
         />
+        <div className="command-text">
+          ffmpeg {inputOptions} {name} {outputOptions} {output}
+        </div>
       </div>
       <h4>3. Run and get the output file</h4>
       <Button type="primary" disabled={!Boolean(file)} onClick={handleExec}>
