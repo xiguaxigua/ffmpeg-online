@@ -97,7 +97,7 @@ const App = () => {
     (async () => {
       ffmpeg.current = createFFmpeg({
         log: true,
-        corePath: `${window.location.origin}/static/ffmpeg-core.js`,
+        corePath: `${window.location.origin}/static/v0.11.0/ffmpeg-core.js`,
       });
       ffmpeg.current.setProgress(({ ratio }) => {
         console.log(ratio);
