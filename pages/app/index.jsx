@@ -97,7 +97,7 @@ const App = () => {
     (async () => {
       ffmpeg.current = createFFmpeg({
         log: true,
-        corePath: "/static/ffmpeg-core.js",
+        corePath: `${window.location.origin}/static/ffmpeg-core.js`,
       });
       ffmpeg.current.setProgress(({ ratio }) => {
         console.log(ratio);
@@ -105,6 +105,7 @@ const App = () => {
       });
       setTip("ffmpeg static resource loading...");
       setSpinning(true);
+      console.log('ffmpeg.current', ffmpeg.current)
       await ffmpeg.current.load();
       setSpinning(false);
     })();
