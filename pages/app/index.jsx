@@ -6,6 +6,7 @@ import { fileTypeFromBuffer } from "file-type";
 import { Analytics } from '@vercel/analytics/react';
 import numerify from "numerify/lib/index.cjs";
 import qs from "query-string";
+import JSZip from "jszip";
 
 const { Dragger } = Upload;
 
@@ -21,7 +22,10 @@ const App = () => {
   const [fileList, setFileList] = useState([]);
   const [name, setName] = useState("input.mp4");
   const [output, setOutput] = useState("output.mp4");
+  const [downloadFileName, setDownloadFileName] = useState("output.mp4");
   const ffmpeg = useRef();
+  const currentFSls = useRef([]);
+  
 
   const handleExec = async () => {
     if (!file) {
@@ -38,6 +42,7 @@ const App = () => {
           await fetchFile(fileItem)
         );
       }
+      currentFSls.current = ffmpeg.current.FS('readdir', '.');
       setTip("start executing the command");
       await ffmpeg.current.run(
         ...inputOptions.split(" "),
@@ -46,14 +51,29 @@ const App = () => {
         output
       );
       setSpinning(false);
+      const FSls = ffmpeg.current.FS('readdir', '.')
+      const outputFiles = FSls.filter(i => !currentFSls.current.includes(i))
+      if (outputFiles.length === 1) {
+        const data = ffmpeg.current.FS("readFile", outputFiles[0]);
+        const type = await fileTypeFromBuffer(data.buffer);
 
-      const data = ffmpeg.current.FS("readFile", output);
-      const type = await fileTypeFromBuffer(data.buffer);
+        const objectURL = URL.createObjectURL(
+          new Blob([data.buffer], { type: type.mime })
+        );
+        setHref(objectURL);
+        setDownloadFileName(outputFiles[0]);
+      } else if (outputFiles.length > 1) {
+        var zip = new JSZip();
+        outputFiles.forEach((filleName) => {
+          const data = ffmpeg.current.FS("readFile", filleName);
+          zip.file(filleName, data);
+        });
+        const zipFile = await zip.generateAsync({ type: 'blob' });
+        const objectURL = URL.createObjectURL(zipFile);
+        setHref(objectURL);
+        setDownloadFileName('output.zip');
+      }
 
-      const objectURL = URL.createObjectURL(
-        new Blob([data.buffer], { type: type.mime })
-      );
-      setHref(objectURL);
       message.success(
         "Run successfully, click the download button to download the output file",
         10
@@ -112,23 +132,26 @@ const App = () => {
   }, []);
 
   useEffect(() => {
-    const { inputOptions, outputOptions } = qs.parse(window.location.search);
+    const { inputOptions, outputOptions, output } = qs.parse(window.location.search);
     if (inputOptions) {
       setInputOptions(inputOptions);
     }
     if (outputOptions) {
       setOutputOptions(outputOptions);
     }
+    if (output) {
+      setOutput(output);
+    }
   }, []);
 
   useEffect(() => {
     // run after inputOptions and outputOptions set from querystring
     setTimeout(() => {
-      let queryString = qs.stringify({ inputOptions, outputOptions });
+      let queryString = qs.stringify({ inputOptions, outputOptions, output });
       const newUrl = `${location.origin}${location.pathname}?${queryString}`;
       history.pushState("", "", newUrl);
     });
-  }, [inputOptions, outputOptions]);
+  }, [inputOptions, outputOptions, output]);
 
   return (
     <div className="page-app">
@@ -190,7 +213,7 @@ const App = () => {
       <br />
       <br />
       {href && (
-        <a href={href} download={output}>
+        <a href={href} download={downloadFileName}>
           download file
         </a>
       )}
