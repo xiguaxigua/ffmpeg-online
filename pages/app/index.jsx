@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { createFFmpeg, fetchFile } from "@ffmpeg/ffmpeg";
 import { InboxOutlined } from "@ant-design/icons";
 import { fileTypeFromBuffer } from "file-type";
-import { Analytics } from '@vercel/analytics/react';
+import { Analytics } from "@vercel/analytics/react";
 import numerify from "numerify/lib/index.cjs";
 import qs from "query-string";
 import JSZip from "jszip";
@@ -25,13 +25,14 @@ const App = () => {
   const [downloadFileName, setDownloadFileName] = useState("output.mp4");
   const ffmpeg = useRef();
   const currentFSls = useRef([]);
-  
 
   const handleExec = async () => {
     if (!file) {
       return;
     }
     setOutputFiles([]);
+    setHref("");
+    setDownloadFileName("");
     try {
       setTip("Loading file into browser");
       setSpinning(true);
@@ -42,7 +43,7 @@ const App = () => {
           await fetchFile(fileItem)
         );
       }
-      currentFSls.current = ffmpeg.current.FS('readdir', '.');
+      currentFSls.current = ffmpeg.current.FS("readdir", ".");
       setTip("start executing the command");
       await ffmpeg.current.run(
         ...inputOptions.split(" "),
@@ -51,8 +52,8 @@ const App = () => {
         output
       );
       setSpinning(false);
-      const FSls = ffmpeg.current.FS('readdir', '.')
-      const outputFiles = FSls.filter(i => !currentFSls.current.includes(i))
+      const FSls = ffmpeg.current.FS("readdir", ".");
+      const outputFiles = FSls.filter((i) => !currentFSls.current.includes(i));
       if (outputFiles.length === 1) {
         const data = ffmpeg.current.FS("readFile", outputFiles[0]);
         const type = await fileTypeFromBuffer(data.buffer);
@@ -62,22 +63,30 @@ const App = () => {
         );
         setHref(objectURL);
         setDownloadFileName(outputFiles[0]);
+        message.success(
+          "Run successfully, click the download button to download the output file",
+          10
+        );
       } else if (outputFiles.length > 1) {
         var zip = new JSZip();
         outputFiles.forEach((filleName) => {
           const data = ffmpeg.current.FS("readFile", filleName);
           zip.file(filleName, data);
         });
-        const zipFile = await zip.generateAsync({ type: 'blob' });
+        const zipFile = await zip.generateAsync({ type: "blob" });
         const objectURL = URL.createObjectURL(zipFile);
         setHref(objectURL);
-        setDownloadFileName('output.zip');
+        setDownloadFileName("output.zip");
+        message.success(
+          "Run successfully, click the download button to download the output file",
+          10
+        );
+      } else {
+        message.success(
+          "Run successfully, No files are generated, if you want to see the output of the ffmpeg command, please open the console",
+          10
+        );
       }
-
-      message.success(
-        "Run successfully, click the download button to download the output file",
-        10
-      );
     } catch (err) {
       console.error(err);
       message.error(
@@ -91,7 +100,10 @@ const App = () => {
     if (!files) {
       return;
     }
-    const filenames = files.split(",").filter((i) => i).map(i => i.trim());
+    const filenames = files
+      .split(",")
+      .filter((i) => i)
+      .map((i) => i.trim());
     const outputFilesData = [];
     for (let filename of filenames) {
       try {
@@ -106,8 +118,8 @@ const App = () => {
           href: objectURL,
         });
       } catch (err) {
-        message.error(`${filename} get failed`)
-        console.error(err)
+        message.error(`${filename} get failed`);
+        console.error(err);
       }
     }
     setOutputFiles(outputFilesData);
@@ -125,14 +137,15 @@ const App = () => {
       });
       setTip("ffmpeg static resource loading...");
       setSpinning(true);
-      console.log('ffmpeg.current', ffmpeg.current)
       await ffmpeg.current.load();
       setSpinning(false);
     })();
   }, []);
 
   useEffect(() => {
-    const { inputOptions, outputOptions, output } = qs.parse(window.location.search);
+    const { inputOptions, outputOptions, output } = qs.parse(
+      window.location.search
+    );
     if (inputOptions) {
       setInputOptions(inputOptions);
     }
@@ -164,7 +177,10 @@ const App = () => {
       <h2 align="center">ffmpeg-online</h2>
 
       <h4>1. Select file</h4>
-      <p style={{ color: 'gray' }}>Your files will not be uploaded to the server, only processed in the browser</p>
+      <p style={{ color: "gray" }}>
+        Your files will not be uploaded to the server, only processed in the
+        browser
+      </p>
       <Dragger
         multiple
         beforeUpload={(file, fileList) => {
@@ -218,7 +234,11 @@ const App = () => {
         </a>
       )}
       <h4>4. Get other file from file system (use , split)</h4>
-      <p style={{ color: 'gray' }}>In some scenarios, the output file contains multiple files. At this time, multiple file names can be separated by commas and typed into the input box below.</p>
+      <p style={{ color: "gray" }}>
+        In some scenarios, the output file contains multiple files. At this
+        time, multiple file names can be separated by commas and typed into the
+        input box below.
+      </p>
       <Input
         value={files}
         placeholder="Please enter the download file name"
