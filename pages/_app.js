@@ -5,7 +5,7 @@ import Script from "next/script";
 function MyApp({ Component, pageProps }) {
   return (
     <>
-      <Script id="my-script">
+      <Script id="my-script" strategy="beforeInteractive">
         {`
           var _hmt = _hmt || [];
           (function() {
