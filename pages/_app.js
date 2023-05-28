@@ -5,7 +5,7 @@ import Script from "next/script";
 function MyApp({ Component, pageProps }) {
   return (
     <>
-      <Script>
+      <Script id="my-script">
         {`
           var _hmt = _hmt || [];
           (function() {
