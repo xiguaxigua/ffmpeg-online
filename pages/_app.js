@@ -12,11 +12,14 @@ function MyApp({ Component, pageProps }) {
 
       <Script strategy="lazyOnload" id="ga">
         {`
+          window.ga_user_id = window.localStorage.getItem('ga_user_id') || '' + Date.now() + Math.floor(Math.random()*1e4);
+          window.localStorage.setItem('ga_user_id', window.ga_user_id);
           window.dataLayer = window.dataLayer || [];
           function gtag(){dataLayer.push(arguments);}
           gtag('js', new Date());
           gtag('config', 'G-M4JFD2DM29', {
-          page_path: window.location.pathname,
+            page_path: window.location.pathname,
+            user_id: window.ga_user_id
           });
         `}
       </Script>
