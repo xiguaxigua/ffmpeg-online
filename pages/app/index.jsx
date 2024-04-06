@@ -7,6 +7,7 @@ import { Analytics } from "@vercel/analytics/react";
 import numerify from "numerify/lib/index.cjs";
 import qs from "query-string";
 import JSZip from "jszip";
+import mime from "mime";
 
 const { Dragger } = Upload;
 
@@ -59,7 +60,9 @@ const App = () => {
         const type = await fileTypeFromBuffer(data.buffer);
 
         const objectURL = URL.createObjectURL(
-          new Blob([data.buffer], { type: type.mime })
+          new Blob([data.buffer], {
+            type: type?.mime ?? mime.getType(outputFiles[0]),
+          })
         );
         setHref(objectURL);
         setDownloadFileName(outputFiles[0]);
@@ -129,7 +132,8 @@ const App = () => {
     (async () => {
       ffmpeg.current = createFFmpeg({
         log: true,
-        corePath: 'https://cdn.jsdelivr.net/npm/@ffmpeg/core@0.11.0/dist/ffmpeg-core.js',
+        corePath:
+          "https://cdn.jsdelivr.net/npm/@ffmpeg/core@0.11.0/dist/ffmpeg-core.js",
       });
       ffmpeg.current.setProgress(({ ratio }) => {
         console.log(ratio);
